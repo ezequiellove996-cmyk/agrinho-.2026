@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agrinho 2026 🌱</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #2E7D32, #4CAF50);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.15);
+      border-radius: 25px;
+      padding: 35px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 { font-size: 3em; margin: 10px 0; }
+    h2 { margin: 20px 0 15px; }
+
+    button {
+      background: #FFEB3B;
+      color: #1B5E20;
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      margin: 15px 8px;
+    }
+    button:hover { transform: scale(1.08); transition: 0.2s; }
+
+    #question-image {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 18px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .options button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      margin: 12px 0;
+      font-size: 1.15em;
+      background: rgba(255,255,255,0.9);
+      color: #1B5E20;
+      border-radius: 12px;
+    }
+
+    .progress {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .restart-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌾 Agrinho 2026</h1>
+      <p>Agro que alimenta, gente que cuida!</p>
+    </header>
+
+    <div id="start-screen">
+      <h2>Bem-vindo ao Quiz do Agrinho 2026!</h2>
+      <p>Responda as 22 questões corretamente.<br>
+         Se errar, terá que recomeçar do início.</p>
+      <button onclick="startQuiz()">COMEÇAR O QUIZ</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+      <div class="progress">Questão <span id="current-q">1</span> de 22</div>
+      <img id="question-image" src="" alt="Imagem da questão">
+      <h2 id="question-text"></h2>
+      <div id="options" class="options"></div>
+      <button onclick="restartQuiz()" class="restart-btn">Recomeçar do início</button>
+    </div>
+
+    <div id="result-screen" class="hidden">
+      <h2 id="result-title"></h2>
+      <p id="result-message"></p>
+      <button onclick="restartQuiz()">Jogar Novamente</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "1. Qual é o tema do Agrinho 2026 em vários estados?", img: "https://source.unsplash.com/random/800x400/?farm,sustainable", options: ["Agro que alimenta, gente que cuida", "Tecnologia no campo", "Festa junina rural", "Exportação de café"], answer: 0 },
+      { q: "2. O que significa SENAR?", img: "https://source.unsplash.com/random/800x400/?education,agriculture", options: ["Serviço Nacional de Aprendizagem Rural", "Sindicato dos Engenheiros do Agronegócio", "Sistema Nacional de Agricultura Regenerativa", "Secretaria de Nutrição Rural"], answer: 0 },
+      { q: "3. Qual prática ajuda a proteger o solo da erosão?", img: "https://source.unsplash.com/random/800x400/?soil,conservation", options: ["Plantio direto", "Queimar a palha", "Arar a terra todos os dias", "Plantar só soja"], answer: 0 },
+      { q: "4. Qual inseto é muito importante para polinizar as plantas?", img: "https://source.unsplash.com/random/800x400/?bee", options: ["Abelha", "Barata", "Formiga", "Mosquito"], answer: 0 },
+      { q: "5. O que é agricultura familiar?", img: "https://source.unsplash.com/random/800x400/?family,farm", options: ["Produção feita por famílias no campo", "Grande fazenda com máquinas", "Só plantação de soja", "Agricultura feita só por robôs"], answer: 0 },
+      { q: "6. Por que é importante preservar as matas ciliares?", img: "https://source.unsplash.com/random/800x400/?river,forest", options: ["Proteger os rios e evitar erosão", "Aumentar a produção de soja", "Facilitar o plantio", "Atrair mais turistas"], answer: 0 },
+      { q: "7. Qual é a principal fonte de alimento no mundo produzida no Brasil?", img: "https://source.unsplash.com/random/800x400/?soybean,field", options: ["Soja", "Maçã", "Uva", "Trigo"], answer: 0 },
+      { q: "8. O que devemos fazer com o lixo orgânico?", img: "https://source.unsplash.com/random/800x400/?compost", options: ["Fazer compostagem", "Jogar no rio", "Queimar", "Enterrar em qualquer lugar"], answer: 0 },
+      { q: "9. Qual é uma vantagem da rotação de culturas?", img: "https://source.unsplash.com/random/800x400/?crop,rotation", options: ["Melhora a saúde do solo", "Diminui a produção", "Aumenta o uso de agrotóxicos", "Acaba com a biodiversidade"], answer: 0 },
+      { q: "10. O que é irrigação?", img: "https://source.unsplash.com/random/800x400/?irrigation", options: ["Levar água para as plantas", "Plantar à noite", "Colher com máquina", "Adubar a terra"], answer: 0 },
+      { q: "11. Por que as árvores são importantes para o clima?", img: "https://source.unsplash.com/random/800x400/?tree,forest", options: ["Absorvem CO₂ e produzem oxigênio", "Aumentam o aquecimento global", "Não servem para nada", "Só servem para fazer móveis"], answer: 0 },
+      { q: "12. O que é um alimento orgânico?", img: "https://source.unsplash.com/random/800x400/?organic,food", options: ["Produzido sem agrotóxicos químicos", "Produzido só com adubo químico", "Alimento importado", "Alimento enlatado"], answer: 0 },
+      { q: "13. Qual animal é símbolo da pecuária brasileira?", img: "https://source.unsplash.com/random/800x400/?cow", options: ["Boi", "Cavalo", "Porco", "Galinha"], answer: 0 },
+      { q: "14. O que fazer para economizar água na irrigação?", img: "https://source.unsplash.com/random/800x400/?water,saving", options: ["Usar gotejamento ou pivô", "Irrigar o dia todo", "Jogar água com mangueira aberta", "Não irrigar nunca"], answer: 0 },
+      { q: "15. Qual é o papel do campo para a cidade?", img: "https://source.unsplash.com/random/800x400/?city,farm", options: ["Produzir alimentos e matérias-primas", "Só servir de paisagem", "Aumentar a poluição", "Diminuir a produção de comida"], answer: 0 },
+      { q: "16. O que é sustentabilidade no agro?", img: "https://source.unsplash.com/random/800x400/?sustainability", options: ["Produzir respeitando o meio ambiente", "Produzir o máximo possível sem cuidar da natureza", "Só usar máquinas grandes", "Queimar o mato sempre"], answer: 0 },
+      { q: "17. Qual fruta o Brasil é um dos maiores produtores do mundo?", img: "https://source.unsplash.com/random/800x400/?orange", options: ["Laranja", "Maçã vermelha", "Morango", "Banana nanica"], answer: 0 },
+      { q: "18. Por que não devemos jogar lixo no rio?", img: "https://source.unsplash.com/random/800x400/?river,pollution", options: ["Polui a água e mata os animais", "Melhora a água", "Aumenta a pesca", "Não faz diferença"], answer: 0 },
+      { q: "19. O que é plantio direto?", img: "https://source.unsplash.com/random/800x400/?no-till", options: ["Plantar sem revolver o solo", "Plantar de cabeça para baixo", "Só plantar com trator", "Plantar só no inverno"], answer: 0 },
+      { q: "20. Qual é a importância das abelhas para a agricultura?", img: "https://source.unsplash.com/random/800x400/?honeybee", options: ["Polinizar as flores", "Comer as plantas", "Produzir leite", "Fazer adubo"], answer: 0 },
+      { q: "21. O que significa 'gente que cuida' no tema do Agrinho?", img: "https://source.unsplash.com/random/800x400/?farmer,care", options: ["Cuidar do meio ambiente e das pessoas", "Só cuidar do lucro", "Cuidar só das máquinas", "Não cuidar de nada"], answer: 0 },
+      { q: "22. Qual é a principal mensagem do Agrinho 2026?", img: "https://source.unsplash.com/random/800x400/?happy,farm,kids", options: ["Campo e cidade juntos transformam o futuro", "Só o campo é importante", "A cidade não precisa do campo", "Tecnologia substitui tudo"], answer: 0 }
+    ];
+
+    let currentQuestion = 0;
+
+    function startQuiz() {
+      currentQuestion = 0;
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('current-q').textContent = currentQuestion + 1;
+      document.getElementById('question-text').textContent = q.q;
+      document.getElementById('question-image').src = q.img;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[currentQuestion].answer) {
+        currentQuestion++;
+        if (currentQuestion >= questions.length) {
+          showSuccess();
+        } else {
+          showQuestion();
+        }
+      } else {
+        alert("❌ Você errou! Recomece do início.");
+        restartQuiz();
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('quiz-screen').classList.add('hidden');
+      const result = document.getElementById('result-screen');
+      result.classList.remove('hidden');
+      document.getElementById('result-title').innerHTML = '🎉 PARABÉNS!';
+      document.getElementById('result-message').innerHTML = 'Você acertou todas as 22 questões!<br><strong>Você passou no teste do Agrinho 2026!</strong><br>🌱 Agro que alimenta, gente que cuida!';
+    }
+
+    function restartQuiz() {
+      startQuiz();
+    }
+  </script>
+</body>
+</html>
